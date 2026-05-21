@@ -79,16 +79,37 @@ function buildWaMessage(b) {
 
 /* ── Navigation ────────────────────────────────────────── */
 function showSection(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach((t, i) => {
-    const ids = ['home', 'book', 'admin'];
-    t.classList.toggle('active', ids[i] === id);
-    t.setAttribute('aria-current', ids[i] === id ? 'page' : 'false');
-  });
-  const sec = document.getElementById('sec-' + id);
-  if (sec) sec.classList.add('active');
-  if (id === 'admin') renderAdmin();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach((t, i) => {
+        const ids = ['home', 'book', 'admin'];
+        t.classList.toggle('active', ids[i] === id);
+        t.setAttribute('aria-current', ids[i] === id ? 'page' : 'false');
+    });
+    const sec = document.getElementById('sec-' + id);
+    if (sec) sec.classList.add('active');
+
+    // PASSWORD PROTECTION FOR ADMIN
+    if (id === 'admin') {
+        // Check if already logged in
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            renderAdmin();
+        } else {
+            const password = prompt('Enter admin password:');
+            if (password === 'admin123') {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                renderAdmin();
+            } else {
+                alert('Incorrect password');
+                // Go back to home section
+                document.getElementById('sec-home').classList.add('active');
+                document.querySelectorAll('.nav-tab').forEach((t, i) => {
+                    t.classList.toggle('active', i === 0);
+                });
+            }
+        }
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 /* ── Service selection ─────────────────────────────────── */
