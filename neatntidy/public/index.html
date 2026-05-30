@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neat n Tidy Car Wash – Stellenbosch</title>
+  <meta name="description" content="Premium mobile car wash in Stellenbosch. Book online in 60 seconds – we come to you.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ───────── HEADER ───────── -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-droplet" aria-hidden="true"></i></div>
+      <div>
+        <div class="logo-text">Neat n Tidy</div>
+        <span class="logo-sub">Car Wash · Stellenbosch</span>
+      </div>
+    </div>
+    <nav class="nav-tabs" role="navigation" aria-label="Main navigation">
+      <button class="nav-tab active" onclick="showSection('home')" aria-current="page">
+        <i class="ti ti-home" aria-hidden="true"></i> Home
+      </button>
+      <button class="nav-tab" onclick="showSection('book')">
+        <i class="ti ti-calendar-plus" aria-hidden="true"></i> Book
+      </button>
+      <button class="nav-tab" onclick="showSection('admin')">
+        <i class="ti ti-layout-dashboard" aria-hidden="true"></i> Admin
+      </button>
+    </nav>
+  </header>
+
+  <div class="main">
+
+    <!-- ───────── HOME ───────── -->
+    <section class="section active" id="sec-home" aria-label="Home">
+
+      <div class="hero">
+        <div class="hero-badge">
+          <i class="ti ti-map-pin" aria-hidden="true"></i>
+          Stellenbosch University &amp; surrounds
+        </div>
+        <h1>Your car, <span>clean</span> &amp; ready.</h1>
+        <p>Premium mobile car wash brought to your location. Book in 60 seconds – we come to you.</p>
+        <button class="hero-cta" onclick="showSection('book')">
+          <i class="ti ti-calendar-plus" aria-hidden="true"></i> Book a Wash Now
+        </button>
+      </div>
+
+      <!-- Pricing -->
+      <div class="price-grid" role="list" aria-label="Pricing options">
+        <div class="price-card" role="listitem">
+          <div class="price-icon"><i class="ti ti-car" aria-hidden="true"></i></div>
+          <div class="price-label">Single car</div>
+          <div class="price-amount">R100</div>
+          <div class="price-desc">Standard wash for any vehicle</div>
+        </div>
+        <div class="price-card" role="listitem">
+          <div class="price-icon"><i class="ti ti-car-crash" aria-hidden="true"></i></div>
+          <div class="price-label">2 Cars</div>
+          <div class="price-amount">R180</div>
+          <div class="price-desc">Save R20 on two vehicles</div>
+        </div>
+        <div class="price-card" role="listitem">
+          <div class="price-icon"><i class="ti ti-bus" aria-hidden="true"></i></div>
+          <div class="price-label">3 Cars</div>
+          <div class="price-amount">R250</div>
+          <div class="price-desc">Best value for three cars</div>
+        </div>
+        <div class="price-card featured" role="listitem">
+          <div class="badge">Best Value</div>
+          <div class="price-icon"><i class="ti ti-repeat" aria-hidden="true"></i></div>
+          <div class="price-label">Monthly Package</div>
+          <div class="price-amount">R350</div>
+          <div class="price-desc">4 washes per month – save R50</div>
+        </div>
+      </div>
+
+      <!-- Why us -->
+      <div class="card">
+        <div class="card-title"><i class="ti ti-sparkles" aria-hidden="true"></i> Why Neat n Tidy?</div>
+        <div class="features-grid">
+          <div class="feature-item">
+            <i class="ti ti-map-pin feature-icon" aria-hidden="true"></i>
+            <div>
+              <div class="feature-title">We come to you</div>
+              <div class="feature-desc">Drop a location pin, we handle the rest</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <i class="ti ti-clock feature-icon" aria-hidden="true"></i>
+            <div>
+              <div class="feature-title">Instant confirmation</div>
+              <div class="feature-desc">Booking confirmed in seconds</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <i class="ti ti-star feature-icon" aria-hidden="true"></i>
+            <div>
+              <div class="feature-title">5-star service</div>
+              <div class="feature-desc">Top-rated by Stellenbosch locals</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <i class="ti ti-brand-whatsapp feature-icon wa-icon" aria-hidden="true"></i>
+            <div>
+              <div class="feature-title">WhatsApp support</div>
+              <div class="feature-desc">Quick comms, always in reach</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WhatsApp CTA -->
+      <div class="card dark-card">
+        <div class="dark-card-inner">
+          <div>
+            <div class="dark-card-title">Have a question? Chat with us</div>
+            <div class="dark-card-sub">We reply fast on WhatsApp</div>
+          </div>
+          <a href="https://wa.me/27717398521" target="_blank" rel="noopener" class="btn-wa">
+            <i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp Us
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ───────── BOOKING ───────── -->
+    <section class="section" id="sec-book" aria-label="Book a wash">
+
+      <div id="booking-form-wrapper">
+        <div class="section-header">
+          <h2>Book a Wash</h2>
+          <p>Fill in your details and we'll confirm your booking instantly.</p>
+        </div>
+
+        <!-- Contact details -->
+        <div class="card">
+          <div class="card-title"><i class="ti ti-user" aria-hidden="true"></i> Your Details</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" id="fname" placeholder="e.g. Thabo" autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name</label>
+              <input type="text" id="lname" placeholder="e.g. Nkosi" autocomplete="family-name">
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" placeholder="+27 81 234 5678" autocomplete="tel">
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+            </div>
+          </div>
+        </div>
+
+        <!-- Date & time -->
+        <div class="card">
+          <div class="card-title"><i class="ti ti-calendar" aria-hidden="true"></i> Date &amp; Time</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="bdate">Preferred Date</label>
+              <input type="date" id="bdate">
+            </div>
+            <div class="form-group">
+              <label for="btime">Preferred Time</label>
+              <select id="btime">
+                <option value="">Select a time slot</option>
+                <option>07:00 – 08:00</option>
+                <option>08:00 – 09:00</option>
+                <option>09:00 – 10:00</option>
+                <option>10:00 – 11:00</option>
+                <option>11:00 – 12:00</option>
+                <option>12:00 – 13:00</option>
+                <option>13:00 – 14:00</option>
+                <option>14:00 – 15:00</option>
+                <option>15:00 – 16:00</option>
+                <option>16:00 – 17:00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="card">
+          <div class="card-title"><i class="ti ti-map-pin" aria-hidden="true"></i> Your Location</div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label for="location">Street Address / Area</label>
+            <input type="text" id="location" placeholder="e.g. 15 Bird St, Stellenbosch" autocomplete="street-address">
+          </div>
+          <div class="form-group">
+            <label for="notes">Special Notes for Driver</label>
+            <textarea id="notes" placeholder="e.g. Park at Gate 2, call when you arrive…"></textarea>
+          </div>
+          <div class="info-banner">
+            <i class="ti ti-info-circle" aria-hidden="true"></i>
+            <span>We serve Stellenbosch and surrounding areas. Staff use GPS directions to find you.</span>
+          </div>
+        </div>
+
+        <!-- Cars & package -->
+        <div class="card">
+          <div class="card-title"><i class="ti ti-car" aria-hidden="true"></i> Number of Cars &amp; Package</div>
+          <label class="section-label">How many cars?</label>
+          <div class="car-selector" role="group" aria-label="Number of cars">
+            <button class="car-btn selected" onclick="selectCars(1,'R100')" aria-pressed="true">
+              1 Car<br><small>R100</small>
+            </button>
+            <button class="car-btn" onclick="selectCars(2,'R180')" aria-pressed="false">
+              2 Cars<br><small>R180</small>
+            </button>
+            <button class="car-btn" onclick="selectCars(3,'R250')" aria-pressed="false">
+              3 Cars<br><small>R250</small>
+            </button>
+          </div>
+          <label class="section-label" style="margin-top:18px">Or choose a monthly package</label>
+          <div class="pkg-grid">
+            <button class="pkg-btn" id="pkg-monthly" onclick="selectPkg('Monthly (4 washes)','R350')" aria-pressed="false">
+              Monthly Package
+              <span class="pkg-price">R350</span>
+              <small>4 washes</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="card">
+          <div class="card-title"><i class="ti ti-credit-card" aria-hidden="true"></i> Payment Method</div>
+          <div class="pay-grid" role="group" aria-label="Payment method">
+            <button class="pay-btn selected" onclick="selectPay(this,'Cash')" aria-pressed="true">
+              <i class="ti ti-cash" aria-hidden="true"></i> Cash
+            </button>
+            <button class="pay-btn" onclick="selectPay(this,'EFT')" aria-pressed="false">
+              <i class="ti ti-building-bank" aria-hidden="true"></i> EFT
+            </button>
+            <button class="pay-btn" onclick="selectPay(this,'Card')" aria-pressed="false">
+              <i class="ti ti-credit-card" aria-hidden="true"></i> Card (Online)
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-box" aria-label="Booking summary">
+          <h3><i class="ti ti-receipt" aria-hidden="true"></i> Booking Summary</h3>
+          <div class="summary-row"><span>Service</span><span class="val" id="sum-service">1 Car Wash</span></div>
+          <div class="summary-row"><span>Payment</span><span class="val" id="sum-pay">Cash</span></div>
+          <div class="summary-row"><span>Date</span><span class="val" id="sum-date">Not selected</span></div>
+          <div class="summary-total">
+            <span class="label">Total</span>
+            <span class="amount" id="sum-total">R100</span>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <button class="btn-primary" onclick="submitBooking()">
+            <i class="ti ti-check" aria-hidden="true"></i> Confirm Booking
+          </button>
+        </div>
+      </div>
+
+      <!-- Success screen -->
+      <div class="success-screen" id="success-screen" aria-live="polite">
+        <div class="success-icon" aria-hidden="true"><i class="ti ti-check"></i></div>
+        <h2>Booking Confirmed!</h2>
+        <p>We've received your booking. Tap below to send us your details on WhatsApp and we'll confirm your slot right away.</p>
+        <div class="booking-ref">
+          <div class="ref-label">Booking Reference</div>
+          <div class="ref-code" id="booking-ref-code">NNT-0001</div>
+        </div>
+        <div class="success-actions">
+          <a id="wa-confirm-link" href="https://wa.me/27717398521" target="_blank" rel="noopener" class="btn-wa">
+            <i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Confirm on WhatsApp
+          </a>
+          <button class="btn-secondary" onclick="resetBooking()">
+            <i class="ti ti-plus" aria-hidden="true"></i> New Booking
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ───────── ADMIN ───────── -->
+    <section class="section" id="sec-admin" aria-label="Admin dashboard">
+
+      <div class="admin-header">
+        <h2><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Admin Dashboard</h2>
+        <button class="btn-secondary" onclick="exportBookings()">
+          <i class="ti ti-download" aria-hidden="true"></i> Export CSV
+        </button>
+      </div>
+
+      <div class="stats-row" role="list" aria-label="Statistics">
+        <div class="stat-card blue" role="listitem">
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-val" id="stat-total">0</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card amber" role="listitem">
+          <div class="stat-label">Pending</div>
+          <div class="stat-val" id="stat-pending">0</div>
+          <div class="stat-sub">Awaiting action</div>
+        </div>
+        <div class="stat-card green" role="listitem">
+          <div class="stat-label">Confirmed</div>
+          <div class="stat-val" id="stat-confirmed">0</div>
+          <div class="stat-sub">Upcoming washes</div>
+        </div>
+        <div class="stat-card cyan" role="listitem">
+          <div class="stat-label">Revenue</div>
+          <div class="stat-val" id="stat-revenue">R0</div>
+          <div class="stat-sub">Confirmed bookings</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-toolbar">
+          <div class="card-title" style="margin:0"><i class="ti ti-list" aria-hidden="true"></i> All Bookings</div>
+          <div class="filter-row" role="group" aria-label="Filter bookings">
+            <button class="filter-btn active" onclick="filterBookings('all',this)">All</button>
+            <button class="filter-btn" onclick="filterBookings('pending',this)">Pending</button>
+            <button class="filter-btn" onclick="filterBookings('confirmed',this)">Confirmed</button>
+            <button class="filter-btn" onclick="filterBookings('completed',this)">Completed</button>
+            <button class="filter-btn" onclick="filterBookings('declined',this)">Declined</button>
+          </div>
+        </div>
+        <div class="booking-list" id="booking-list" role="list" aria-label="Bookings">
+          <div class="empty-state">
+            <i class="ti ti-calendar-off" aria-hidden="true"></i>
+            <p>No bookings yet. Customer bookings will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div><!-- /.main -->
+</div><!-- /.app -->
+
+<!-- WhatsApp float -->
+<a href="https://wa.me/27717398521" class="wa-float" title="Chat on WhatsApp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+</a>
+
+<script src="app.js"></script>
+</body>
+</html>
