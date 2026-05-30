@@ -2,22 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "neatntidy/server.js",
+      "src": "server.js",
       "use": "@vercel/node"
     },
     {
-      "src": "neatntidy/public/**",
+      "src": "public/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/neatntidy/server.js"
+      "dest": "/server.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/neatntidy/public/$1"
+      "dest": "/public/$1"
     }
   ]
 }
