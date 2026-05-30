@@ -170,58 +170,71 @@ function updateSummary() {
 }
 
 /* ── Booking submission ────────────────────────────────── */
-function submitBooking() {
-  const fname    = $('fname').value.trim();
-  const lname    = $('lname').value.trim();
-  const phone    = $('phone').value.trim();
-  const bdate    = $('bdate').value;
-  const btime    = $('btime').value;
-  const location = $('location').value.trim();
+async function submitBooking() {
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const bdate = document.getElementById('bdate').value;
+    const btime = document.getElementById('btime').value;
+    const location = document.getElementById('location').value.trim();
 
-  // Basic validation
-  const errors = [];
-  if (!fname)    errors.push('First name');
-  if (!lname)    errors.push('Last name');
-  if (!phone)    errors.push('Phone number');
-  if (!bdate)    errors.push('Date');
-  if (!btime)    errors.push('Time slot');
-  if (!location) errors.push('Location');
+    // Basic validation
+    const errors = [];
+    if (!fname) errors.push('First name');
+    if (!lname) errors.push('Last name');
+    if (!phone) errors.push('Phone number');
+    if (!bdate) errors.push('Date');
+    if (!btime) errors.push('Time slot');
+    if (!location) errors.push('Location');
 
-  if (errors.length) {
-    alert('Please fill in: ' + errors.join(', '));
-    return;
-  }
+    if (errors.length) {
+        alert('Please fill in: ' + errors.join(', '));
+        return;
+    }
 
-  const svc = CONFIG.PRICING[state.selectedService];
-  const ref = generateRef();
+    const svc = CONFIG.PRICING[state.selectedService];
 
-  const booking = {
-    id:       ref,
-    name:     `${fname} ${lname}`,
-    phone,
-    email:    $('email').value.trim(),
-    date:     bdate,
-    time:     btime,
-    location,
-    notes:    $('notes').value.trim(),
-    service:  svc.label,
-    price:    svc.price,
-    payment:  state.selectedPayment,
-    status:   'pending',
-    created:  new Date().toISOString(),
-  };
+    const booking = {
+        name: fname + ' ' + lname,
+        phone: phone,
+        email: document.getElementById('email').value.trim(),
+        date: bdate,
+        time: btime,
+        location: location,
+        notes: document.getElementById('notes').value.trim(),
+        service: svc.label,
+        price: svc.price,
+        payment: state.selectedPayment,
+    };
 
-  state.bookings.unshift(booking);
-
-  // Update success screen
-  $('booking-ref-code').textContent = ref;
-  $('wa-confirm-link').href = WA(CONFIG.WA_NUMBER, buildWaMessage(booking));
-
-  // Show success
-  $('booking-form-wrapper').style.display = 'none';
-  $('success-screen').style.display       = 'block';
-  $('success-screen').focus();
+    // Send to backend (Supabase)
+    try {
+        const response = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(booking)
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            const savedBooking = result.booking;
+            state.bookings.unshift(savedBooking);
+            
+            // Show success screen
+            document.getElementById('booking-ref-code').textContent = savedBooking.id;
+            document.getElementById('wa-confirm-link').href = WA(CONFIG.WA_NUMBER, buildWaMessage(savedBooking));
+            document.getElementById('booking-form-wrapper').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+            document.getElementById('success-screen').focus();
+        } else {
+            alert('Booking failed: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Error saving booking:', error);
+        alert('Network error. Please try again.');
+    }
 }
+
 
 function resetBooking() {
   // Clear inputs
@@ -246,92 +259,113 @@ function resetBooking() {
 }
 
 /* ── Admin: status updates ─────────────────────────────── */
-function updateStatus(id, newStatus) {
-  const booking = state.bookings.find(b => b.id === id);
-  if (booking) {
-    booking.status = newStatus;
-    renderAdmin();
-  }
+async function updateStatus(id, newStatus) {
+    try {
+        const response = await fetch(`/api/bookings/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update local state
+            const booking = state.bookings.find(b => b.id == id);
+            if (booking) booking.status = newStatus;
+            renderAdmin();
+        }
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update status');
+    }
 }
 
 /* ── Admin: render ─────────────────────────────────────── */
-function renderAdmin() {
-  const { bookings, currentFilter } = state;
+async function renderAdmin() {
+    // Fetch latest bookings from server
+    try {
+        const response = await fetch('/api/bookings');
+        const bookings = await response.json();
+        state.bookings = bookings;
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+    }
 
-  // Stats
-  const pending   = bookings.filter(b => b.status === 'pending').length;
-  const confirmed = bookings.filter(b => b.status === 'confirmed').length;
-  const revenue   = bookings
-    .filter(b => b.status === 'confirmed' || b.status === 'completed')
-    .reduce((sum, b) => sum + b.price, 0);
+    const { bookings, currentFilter } = state;
 
-  $('stat-total').textContent   = bookings.length;
-  $('stat-pending').textContent = pending;
-  $('stat-confirmed').textContent = confirmed;
-  $('stat-revenue').textContent = fmt(revenue);
+    // Stats
+    const pending = bookings.filter(b => b.status === 'pending').length;
+    const confirmed = bookings.filter(b => b.status === 'confirmed').length;
+    const revenue = bookings
+        .filter(b => b.status === 'confirmed' || b.status === 'completed')
+        .reduce((sum, b) => sum + b.price, 0);
 
-  // Filter
-  const filtered = currentFilter === 'all'
-    ? bookings
-    : bookings.filter(b => b.status === currentFilter);
+    document.getElementById('stat-total').textContent = bookings.length;
+    document.getElementById('stat-pending').textContent = pending;
+    document.getElementById('stat-confirmed').textContent = confirmed;
+    document.getElementById('stat-revenue').textContent = fmt(revenue);
 
-  const list = $('booking-list');
+    // Filter
+    const filtered = currentFilter === 'all'
+        ? bookings
+        : bookings.filter(b => b.status === currentFilter);
 
-  if (filtered.length === 0) {
-    list.innerHTML = `
-      <div class="empty-state" aria-live="polite">
-        <i class="ti ti-calendar-off" aria-hidden="true"></i>
-        <p>${bookings.length === 0
-          ? 'No bookings yet. Customer bookings will appear here.'
-          : 'No bookings in this category.'
-        }</p>
-      </div>`;
-    return;
-  }
+    const list = document.getElementById('booking-list');
 
-  list.innerHTML = filtered.map(b => `
-    <div class="booking-item" role="listitem">
-      <div class="booking-avatar" aria-hidden="true">${getInitials(b.name)}</div>
-      <div class="booking-info">
-        <div class="booking-name">
-          ${escapeHtml(b.name)}
-          <span class="status-badge status-${b.status}">${b.status}</span>
+    if (filtered.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state" aria-live="polite">
+                <i class="ti ti-calendar-off" aria-hidden="true"></i>
+                <p>${bookings.length === 0 ? 'No bookings yet. Customer bookings will appear here.' : 'No bookings in this category.'}</p>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = filtered.map(b => `
+        <div class="booking-item" role="listitem">
+            <div class="booking-avatar" aria-hidden="true">${getInitials(b.name)}</div>
+            <div class="booking-info">
+                <div class="booking-name">
+                    ${escapeHtml(b.name)}
+                    <span class="status-badge status-${b.status}">${b.status}</span>
+                </div>
+                <div class="booking-meta">
+                    <span><i class="ti ti-phone" aria-hidden="true"></i>${escapeHtml(b.phone)}</span>
+                    <span><i class="ti ti-calendar" aria-hidden="true"></i>${b.date} · ${b.time}</span>
+                    <span><i class="ti ti-map-pin" aria-hidden="true"></i>${escapeHtml(b.location)}</span>
+                    <span><i class="ti ti-credit-card" aria-hidden="true"></i>${escapeHtml(b.payment)}</span>
+                </div>
+            </div>
+            <span class="booking-pkg">${escapeHtml(b.service)}</span>
+            <span class="booking-price">${fmt(b.price)}</span>
+            <div class="booking-actions">
+                ${b.status === 'pending' ? `
+                    <button class="action-btn accept" title="Accept booking" aria-label="Accept booking for ${escapeHtml(b.name)}"
+                        onclick="updateStatus(${b.id},'confirmed')">
+                        <i class="ti ti-check" aria-hidden="true"></i>
+                    </button>
+                    <button class="action-btn decline" title="Decline booking" aria-label="Decline booking for ${escapeHtml(b.name)}"
+                        onclick="updateStatus(${b.id},'declined')">
+                        <i class="ti ti-x" aria-hidden="true"></i>
+                    </button>` : ''}
+                ${b.status === 'confirmed' ? `
+                    <button class="action-btn done" title="Mark as completed" aria-label="Mark ${escapeHtml(b.name)}'s booking as completed"
+                        onclick="updateStatus(${b.id},'completed')">
+                        <i class="ti ti-check-all" aria-hidden="true"></i>
+                    </button>` : ''}
+                <a href="${WA(b.phone.replace(/\D/g,''), buildWaMessage(b))}"
+                    class="action-btn wa"
+                    title="WhatsApp ${escapeHtml(b.name)}"
+                    aria-label="WhatsApp ${escapeHtml(b.name)}"
+                    target="_blank" rel="noopener">
+                    <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+                </a>
+            </div>
         </div>
-        <div class="booking-meta">
-          <span><i class="ti ti-phone" aria-hidden="true"></i>${escapeHtml(b.phone)}</span>
-          <span><i class="ti ti-calendar" aria-hidden="true"></i>${b.date} · ${b.time}</span>
-          <span><i class="ti ti-map-pin" aria-hidden="true"></i>${escapeHtml(b.location)}</span>
-          <span><i class="ti ti-credit-card" aria-hidden="true"></i>${escapeHtml(b.payment)}</span>
-        </div>
-      </div>
-      <span class="booking-pkg">${escapeHtml(b.service)}</span>
-      <span class="booking-price">${fmt(b.price)}</span>
-      <div class="booking-actions">
-        ${b.status === 'pending' ? `
-          <button class="action-btn accept" title="Accept booking" aria-label="Accept booking for ${escapeHtml(b.name)}"
-            onclick="updateStatus('${b.id}','confirmed')">
-            <i class="ti ti-check" aria-hidden="true"></i>
-          </button>
-          <button class="action-btn decline" title="Decline booking" aria-label="Decline booking for ${escapeHtml(b.name)}"
-            onclick="updateStatus('${b.id}','declined')">
-            <i class="ti ti-x" aria-hidden="true"></i>
-          </button>` : ''}
-        ${b.status === 'confirmed' ? `
-          <button class="action-btn done" title="Mark as completed" aria-label="Mark ${escapeHtml(b.name)}'s booking as completed"
-            onclick="updateStatus('${b.id}','completed')">
-            <i class="ti ti-check-all" aria-hidden="true"></i>
-          </button>` : ''}
-        <a href="${WA(b.phone.replace(/\D/g,''), buildWaMessage(b))}"
-          class="action-btn wa"
-          title="WhatsApp ${escapeHtml(b.name)}"
-          aria-label="WhatsApp ${escapeHtml(b.name)}"
-          target="_blank" rel="noopener">
-          <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
-        </a>
-      </div>
-    </div>
-  `).join('');
+    `).join('');
 }
+
+
 
 /* ── Admin: filter ─────────────────────────────────────── */
 function filterBookings(status, btn) {
