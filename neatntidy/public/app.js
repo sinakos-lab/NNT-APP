@@ -429,3 +429,407 @@ function escapeHtml(str) {
   // Initial admin render
   renderAdmin();
 })();
+
+/* ===== REVIEWS SYSTEM ===== */
+
+// ===== Helper: Generate Consistent Color from Name =====
+function getColorFromName(name) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = Math.abs(hash) % 360;
+    return `hsl(${h}, 65%, 55%)`;
+}
+
+// ===== Helper: Get Initials =====
+function getInitials(name) {
+    if (!name) return '?';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+// ===== Load Reviews =====
+async function loadReviews() {
+    try {
+        const response = await fetch('/api/reviews');
+        const reviews = await response.json();
+        renderReviews(reviews);
+        initCarousel();
+    } catch (error) {
+        console.error('Error loading reviews:', error);
+    }
+}
+
+// ===== Render Reviews =====
+function renderReviews(reviews) {
+    const track = document.getElementById('reviewsTrack');
+    if (!track) return;
+
+    if (!reviews || reviews.length === 0) {
+        track.innerHTML = `
+            <div class="review-card" style="min-width:100%; text-align:center; padding:40px;">
+                <p style="color:#999; font-size:16px;">No reviews yet. Be the first to share your experience!</p>
+            </div>
+        `;
+        return;
+    }
+
+    track.innerHTML = reviews.map(review => {
+        const initials = getInitials(review.customer_name);
+        const bgColor = getColorFromName(review.customer_name);
+        const formattedDate = review.review_date ? new Date(review.review_date).toLocaleDateString('en-ZA', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }) : '';
+
+        const stars = '⭐'.repeat(Math.min(review.rating || 5, 5));
+
+        let avatarHtml = '';
+        if (review.profile_photo_url) {
+            avatarHtml = `<img src="${review.profile_photo_url}" alt="${review.customer_name}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style="background:${bgColor}; color:white; font-weight:600; font-size:20px; width:100%; height:100%; display:flex; align-items:center; justify-content:center; border-radius:50%;">${initials}</span>';">`;
+        } else {
+            avatarHtml = `<span style="background:${bgColor}; color:white; font-weight:600; font-size:20px; width:100%; height:100%; display:flex; align-items:center; justify-content:center; border-radius:50%;">${initials}</span>`;
+        }
+
+        return `
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-avatar">${avatarHtml}</div>
+                    <div class="review-name-date">
+                        <span class="review-name">${escapeHtml(review.customer_name)}</span>
+                        <span class="review-date">${formattedDate || 'Recently'}</span>
+                    </div>
+                </div>
+                <div class="review-stars">${stars}</div>
+                <p class="review-text">"${escapeHtml(review.review_text)}"</p>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== Carousel Logic =====
+let currentSlide = 0;
+let slideInterval = null;
+const AUTOPLAY_DELAY = 5000;
+
+function initCarousel() {
+    const track = document.getElementById('reviewsTrack');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dotsContainer = document.getElementById('carouselDots');
+
+    if (!track || !prevBtn || !nextBtn) return;
+
+    const cards = track.querySelectorAll('.review-card');
+    if (cards.length <= 3) {
+        // Hide controls if few reviews
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        return;
+    }
+
+    let visibleCount = getVisibleCount();
+    const totalSlides = Math.max(0, cards.length - visibleCount);
+
+    function getVisibleCount() {
+        if (window.innerWidth <= 600) return 1;
+        if (window.innerWidth <= 992) return 2;
+        return 3;
+    }
+
+    function updateCarousel() {
+        const maxSlide = Math.max(0, cards.length - visibleCount);
+        if (currentSlide > maxSlide) currentSlide = maxSlide;
+        if (currentSlide < 0) currentSlide = 0;
+
+        const cardWidth = cards[0].offsetWidth + 20;
+        const offset = currentSlide * (cardWidth);
+        track.style.transform = `translateX(-${offset}px)`;
+
+        // Update dots
+        const dots = dotsContainer.querySelectorAll('.dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+    }
+
+    function goToSlide(index) {
+        const maxSlide = Math.max(0, cards.length - visibleCount);
+        if (index < 0) index = maxSlide;
+        if (index > maxSlide) index = 0;
+        currentSlide = index;
+        updateCarousel();
+    }
+
+    function nextSlide() {
+        goToSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        goToSlide(currentSlide - 1);
+    }
+
+    // Create dots
+    const dotCount = Math.max(1, cards.length - visibleCount + 1);
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < dotCount; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => {
+            goToSlide(i);
+            resetAutoplay();
+        });
+        dotsContainer.appendChild(dot);
+    }
+
+    // Event listeners
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoplay();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoplay();
+    });
+
+    // Window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            visibleCount = getVisibleCount();
+            // Recreate dots
+            const newDotCount = Math.max(1, cards.length - visibleCount + 1);
+            const dots = dotsContainer.querySelectorAll('.dot');
+            if (dots.length !== newDotCount) {
+                initCarousel(); // Re-init if dot count changed
+                return;
+            }
+            updateCarousel();
+        }, 300);
+    });
+
+    // Autoplay
+    function startAutoplay() {
+        stopAutoplay();
+        slideInterval = setInterval(nextSlide, AUTOPLAY_DELAY);
+    }
+
+    function stopAutoplay() {
+        if (slideInterval) {
+            clearInterval(slideInterval);
+            slideInterval = null;
+        }
+    }
+
+    function resetAutoplay() {
+        startAutoplay();
+    }
+
+    // Pause on hover
+    const carousel = document.querySelector('.reviews-carousel-wrapper');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopAutoplay);
+        carousel.addEventListener('mouseleave', startAutoplay);
+    }
+
+    // Initial update
+    setTimeout(updateCarousel, 100);
+    startAutoplay();
+}
+
+// ===== REVIEW SUBMISSION =====
+
+// Open modal
+document.addEventListener('DOMContentLoaded', () => {
+    const openBtn = document.getElementById('openReviewForm');
+    const modal = document.getElementById('reviewModal');
+    const closeBtn = document.getElementById('closeReviewForm');
+
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+
+    // Close on overlay click
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    }
+
+    // Star rating
+    const stars = document.querySelectorAll('.star-rating span');
+    const ratingInput = document.getElementById('reviewRatingInput');
+    let selectedRating = 5;
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            selectedRating = parseInt(star.dataset.value);
+            ratingInput.value = selectedRating;
+            stars.forEach(s => {
+                s.classList.toggle('active', parseInt(s.dataset.value) <= selectedRating);
+            });
+        });
+        star.addEventListener('mouseenter', () => {
+            const val = parseInt(star.dataset.value);
+            stars.forEach(s => {
+                s.style.color = parseInt(s.dataset.value) <= val ? '#f5b342' : '#ddd';
+            });
+        });
+        star.addEventListener('mouseleave', () => {
+            stars.forEach(s => {
+                s.style.color = parseInt(s.dataset.value) <= selectedRating ? '#f5b342' : '#ddd';
+            });
+        });
+    });
+
+    // Set initial rating
+    stars.forEach(s => {
+        if (parseInt(s.dataset.value) <= 5) {
+            s.classList.add('active');
+            s.style.color = '#f5b342';
+        }
+    });
+
+    // Photo preview
+    const photoInput = document.getElementById('reviewPhoto');
+    const photoPreview = document.getElementById('photoPreview');
+
+    if (photoInput) {
+        photoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    photoPreview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                photoPreview.innerHTML = '<span class="photo-placeholder">📷</span>';
+            }
+        });
+    }
+
+    // Form submission
+    const form = document.getElementById('reviewForm');
+    const messageEl = document.getElementById('reviewFormMessage');
+
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitReviewBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            messageEl.style.display = 'none';
+            messageEl.className = 'form-message';
+
+            const name = document.getElementById('reviewName').value.trim();
+            const text = document.getElementById('reviewText').value.trim();
+            const rating = parseInt(document.getElementById('reviewRatingInput').value);
+
+            if (!name || !text) {
+                messageEl.textContent = 'Please fill in all required fields.';
+                messageEl.className = 'form-message error';
+                messageEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
+                return;
+            }
+
+            try {
+                let photoUrl = null;
+                const photoFile = document.getElementById('reviewPhoto').files[0];
+
+                // Upload photo if selected
+                if (photoFile) {
+                    const formData = new FormData();
+                    formData.append('file', photoFile);
+                    const uploadRes = await fetch('/api/upload-photo', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const uploadResult = await uploadRes.json();
+                    if (uploadResult.success) {
+                        photoUrl = uploadResult.url;
+                    } else {
+                        messageEl.textContent = 'Photo upload failed: ' + uploadResult.error;
+                        messageEl.className = 'form-message error';
+                        messageEl.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit Review';
+                        return;
+                    }
+                }
+
+                // Submit review
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer_name: name,
+                        review_text: text,
+                        rating: rating,
+                        profile_photo_url: photoUrl
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageEl.textContent = '✅ Thank you! Your review has been submitted and is pending approval.';
+                    messageEl.className = 'form-message success';
+                    messageEl.style.display = 'block';
+                    form.reset();
+                    photoPreview.innerHTML = '<span class="photo-placeholder">📷</span>';
+                    // Reset stars
+                    selectedRating = 5;
+                    document.getElementById('reviewRatingInput').value = 5;
+                    stars.forEach(s => {
+                        s.classList.add('active');
+                        s.style.color = '#f5b342';
+                    });
+                    // Reload reviews after 3 seconds
+                    setTimeout(() => {
+                        loadReviews();
+                        closeModal();
+                    }, 3000);
+                } else {
+                    messageEl.textContent = '❌ Error: ' + result.error;
+                    messageEl.className = 'form-message error';
+                    messageEl.style.display = 'block';
+                }
+            } catch (error) {
+                messageEl.textContent = '❌ Network error. Please try again.';
+                messageEl.className = 'form-message error';
+                messageEl.style.display = 'block';
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Review';
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('reviewModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        // Reset form message
+        const messageEl = document.getElementById('reviewFormMessage');
+        messageEl.style.display = 'none';
+        messageEl.className = 'form-message';
+    }
+
+    // Load reviews on page load
+    loadReviews();
+});

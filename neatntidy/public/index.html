@@ -78,6 +78,82 @@
           <div class="price-desc">4 washes per month – save R50</div>
         </div>
       </div>
+      
+<!-- ===== CUSTOMER REVIEWS CAROUSEL ===== -->
+<section class="reviews-section" id="reviewsSection">
+    <div class="container">
+        <h2 class="reviews-title">⭐ What Our Customers Say</h2>
+        <p class="reviews-subtitle">Real reviews from real people</p>
+
+        <!-- Carousel -->
+        <div class="reviews-carousel-wrapper">
+            <div class="reviews-carousel" id="reviewsCarousel">
+                <div class="reviews-track" id="reviewsTrack">
+                    <!-- Reviews will be loaded dynamically -->
+                </div>
+            </div>
+            
+            <!-- Carousel Controls -->
+            <button class="carousel-btn prev-btn" id="prevBtn" aria-label="Previous reviews">‹</button>
+            <button class="carousel-btn next-btn" id="nextBtn" aria-label="Next reviews">›</button>
+        </div>
+
+        <!-- Dot indicators -->
+        <div class="carousel-dots" id="carouselDots"></div>
+
+        <!-- Submit Review Button -->
+        <div class="submit-review-wrapper">
+            <button class="submit-review-btn" id="openReviewForm">📝 Write a Review</button>
+        </div>
+    </div>
+</section>
+
+<!-- ===== REVIEW SUBMISSION FORM (Modal) ===== -->
+<div class="review-modal-overlay" id="reviewModal">
+    <div class="review-modal">
+        <button class="modal-close" id="closeReviewForm">✕</button>
+        <h2 class="modal-title">Share Your Experience</h2>
+        <p class="modal-subtitle">Tell us about your car wash experience</p>
+
+        <form id="reviewForm">
+            <div class="form-group">
+                <label for="reviewName">Your Name *</label>
+                <input type="text" id="reviewName" placeholder="e.g., Sipho M." required>
+            </div>
+
+            <div class="form-group">
+                <label for="reviewRating">Rating *</label>
+                <div class="star-rating" id="starRating">
+                    <span data-value="1">☆</span>
+                    <span data-value="2">☆</span>
+                    <span data-value="3">☆</span>
+                    <span data-value="4">☆</span>
+                    <span data-value="5">☆</span>
+                </div>
+                <input type="hidden" id="reviewRatingInput" value="5">
+            </div>
+
+            <div class="form-group">
+                <label for="reviewText">Your Review *</label>
+                <textarea id="reviewText" rows="4" placeholder="How was your experience?" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="reviewPhoto">Upload Profile Photo (Optional)</label>
+                <div class="photo-upload-wrapper">
+                    <input type="file" id="reviewPhoto" accept="image/jpeg,image/png,image/webp">
+                    <div class="photo-preview" id="photoPreview">
+                        <span class="photo-placeholder">📷</span>
+                    </div>
+                    <span class="photo-helper">Max 2MB • JPG, PNG, WEBP</span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitReviewBtn">Submit Review</button>
+            <div class="form-message" id="reviewFormMessage"></div>
+        </form>
+    </div>
+</div>
 
       <!-- Why us -->
       <div class="card">
