@@ -524,7 +524,7 @@ function initCarousel() {
     if (!track || !prevBtn || !nextBtn) return;
 
     const cards = track.querySelectorAll('.review-card');
-    if (cards.length <= 3) {
+    if (cards.length <= 1) {
         // Hide controls if few reviews
         prevBtn.style.display = 'none';
         nextBtn.style.display = 'none';
