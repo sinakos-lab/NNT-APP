@@ -535,10 +535,11 @@ function initCarousel() {
     const totalSlides = Math.max(0, cards.length - visibleCount);
 
     function getVisibleCount() {
-        if (window.innerWidth <= 600) return 1;
-        if (window.innerWidth <= 992) return 2;
-        return 3;
-    }
+    const total = document.querySelectorAll('.review-card').length;
+    if (window.innerWidth <= 600) return 1;
+    if (window.innerWidth <= 992) return Math.min(2, total);
+    return Math.min(3, total);
+}
 
     function updateCarousel() {
         const maxSlide = Math.max(0, cards.length - visibleCount);
