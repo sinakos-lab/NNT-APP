@@ -999,3 +999,28 @@ textarea { resize: vertical; min-height: 80px; }
         padding: 28px 18px;
     }
 }
+
+/* ===== FIX REVIEW CARDS ===== */
+.review-card {
+    min-width: calc(100% / 3 - 14px);
+    max-width: calc(100% / 3 - 14px);
+    flex: 0 0 auto;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.review-avatar img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    max-width: 100%;
+}
+
+.reviews-track {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.5s ease;
+    width: 100%;
+}
