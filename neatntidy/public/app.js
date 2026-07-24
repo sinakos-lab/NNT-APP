@@ -32,6 +32,9 @@ const CONFIG = {
   ],
 };
 
+// ===== BOOKING TOGGLE =====
+const BOOKING_ENABLED = true;   // Set to false to close bookings
+
 /* ── State ─────────────────────────────────────────────── */
 const state = {
   bookings:        [],
@@ -837,6 +840,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== DISABLE BOOKINGS (Temporary Closure) =====
 function disableBookings() {
+    // If bookings are enabled, do nothing
+    if (BOOKING_ENABLED) return;
+
     // Disable the main booking button
     const bookBtn = document.querySelector('.btn-primary, .book-btn, .submit-btn, #bookBtn, button[onclick*="book"]');
     if (bookBtn) {
@@ -871,10 +877,15 @@ function disableBookings() {
     // Add a note on the booking form
     const form = document.querySelector('.booking-form, .booking-section, #booking-form-wrapper');
     if (form) {
-        const note = document.createElement('div');
-        note.style.cssText = 'background: #d32f2f; color: white; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold;';
-        note.textContent = '🚫 Services temporarily closed until August 2026';
-        form.prepend(note);
+        // Check if note already exists
+        let note = form.querySelector('.booking-disabled-note');
+        if (!note) {
+            note = document.createElement('div');
+            note.className = 'booking-disabled-note';
+            note.style.cssText = 'background: #d32f2f; color: white; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold;';
+            note.textContent = '🚫 Services temporarily closed until August 2026';
+            form.prepend(note);
+        }
     }
 }
 
