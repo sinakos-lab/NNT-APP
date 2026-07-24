@@ -834,3 +834,62 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load reviews on page load
     loadReviews();
 });
+
+// ===== DISABLE BOOKINGS (Temporary Closure) =====
+function disableBookings() {
+    // Disable the main booking button
+    const bookBtn = document.querySelector('.btn-primary, .book-btn, .submit-btn, #bookBtn, button[onclick*="book"]');
+    if (bookBtn) {
+        bookBtn.disabled = true;
+        bookBtn.style.opacity = '0.6';
+        bookBtn.style.cursor = 'not-allowed';
+        bookBtn.textContent = '🚫 Temporarily Unavailable';
+    }
+
+    // Disable the booking form submit
+    const submitBtn = document.querySelector('.submit-btn, #submitBookingBtn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
+        submitBtn.textContent = '🚫 Temporarily Unavailable';
+    }
+
+    // Disable all booking-related buttons
+    document.querySelectorAll('.booking-btn, .confirm-btn, .pay-btn, .book-now-btn').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.style.cursor = 'not-allowed';
+    });
+
+    // Hide the "Book a Wash Now" CTA button
+    const ctaBtn = document.querySelector('.hero-btn, .cta-button, a[href*="book"]');
+    if (ctaBtn) {
+        ctaBtn.style.display = 'none';
+    }
+
+    // Add a note on the booking form
+    const form = document.querySelector('.booking-form, .booking-section, #booking-form-wrapper');
+    if (form) {
+        const note = document.createElement('div');
+        note.style.cssText = 'background: #d32f2f; color: white; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold;';
+        note.textContent = '🚫 Services temporarily closed until August 2026';
+        form.prepend(note);
+    }
+}
+
+// Run when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    disableBookings();
+
+    // Also disable bookings if using the 'showSection' function
+    const originalShowSection = window.showSection;
+    if (typeof originalShowSection === 'function') {
+        window.showSection = function(id) {
+            originalShowSection(id);
+            if (id === 'book') {
+                disableBookings();
+            }
+        };
+    }
+});
