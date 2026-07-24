@@ -3,7 +3,9 @@ const path = require('path');
 
 // Supabase setup
 const { createClient } = require('@supabase/supabase-js');
-
+const crypto = require('crypto');   // ← MOVE HERE
+const axios = require('axios');     // ← MOVE HERE
+const fileUpload = require('express-fileupload'); // ← MOVE HERE
 // REPLACE THESE WITH YOUR ACTUAL VALUES
 const SUPABASE_URL = 'https://eshllhjstguzvudoygxc.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_5SZkHoEukOKHGsyBtF4HXQ_mWeuBvdS';
@@ -35,8 +37,7 @@ function generatePayfastSignature(data, passphrase = '') {
 }
 
 // ===== PAYFAST =====
-const crypto = require('crypto');
-const axios = require('axios');
+
 
 const PAYFAST_MERCHANT_ID = '36137633';   // ← Replace with yours
 const PAYFAST_MERCHANT_KEY = 'uhwff77niomhm'; // ← Replace with yours
