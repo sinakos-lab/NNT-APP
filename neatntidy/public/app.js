@@ -118,27 +118,24 @@ function showSection(id) {
 function selectCars(serviceKey) {
   state.selectedService = serviceKey;
 
-  // Update active styling on cards
-  document.querySelectorAll('.pricing-card').forEach(card => {
-    card.classList.toggle('selected', card.getAttribute('onclick').includes(serviceKey));
-  });
-
-  updateSummary();
-}
-
-function selectPkg() {
-  state.selectedService = 'monthly';
-
-  // Clear car buttons
+  // Update active styling on buttons
   document.querySelectorAll('.car-btn').forEach(btn => {
-    btn.classList.remove('selected');
-    btn.setAttribute('aria-pressed', 'false');
+    const isSelected = btn.getAttribute('onclick').includes(serviceKey);
+    
+    if (isSelected) {
+        btn.style.borderColor = '#1a73e8';
+        btn.style.backgroundColor = '#f0f7ff';
+        btn.classList.add('selected');
+    } else {
+        btn.style.borderColor = '#e0e0e0';
+        btn.style.backgroundColor = 'white';
+        btn.classList.remove('selected');
+    }
   });
 
-  $('pkg-monthly').classList.add('selected');
-  $('pkg-monthly').setAttribute('aria-pressed', 'true');
   updateSummary();
 }
+
 
 function selectPay(btn, method) {
   state.selectedPayment = method;

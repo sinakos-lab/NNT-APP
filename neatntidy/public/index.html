@@ -58,23 +58,26 @@
 </div>
 
       <!-- Pricing -->
-      <div class="pricing-grid">
-    <div class="pricing-card" onclick="selectCars('basic')">
-        <h3>Basic Wash</h3>
-        <div class="price">R80</div>
-        <p class="desc">Exterior hand wash, dry, and tire shine.</p>
+     <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center; flex-wrap: wrap;">
+    <!-- Card 1 -->
+    <div onclick="showSection('book'); selectCars('basic');" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; width: 220px; cursor: pointer; text-align: left; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+        <h3 style="color: #00d2ff; margin: 0 0 10px 0; font-size: 18px;">Basic Wash</h3>
+        <div style="color: white; font-size: 24px; font-weight: bold; margin-bottom: 10px;">R80</div>
+        <p style="color: #ccc; font-size: 13px; margin: 0; line-height: 1.4;">Exterior hand wash, dry, and tire shine.</p>
     </div>
 
-    <div class="pricing-card" onclick="selectCars('interior')">
-        <h3>Plus Interior</h3>
-        <div class="price">R100</div>
-        <p class="desc">Basic wash + deep vacuum, dashboard wipe-down, and window clean.</p>
+    <!-- Card 2 -->
+    <div onclick="showSection('book'); selectCars('interior');" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; width: 220px; cursor: pointer; text-align: left; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+        <h3 style="color: #00d2ff; margin: 0 0 10px 0; font-size: 18px;">Plus Interior</h3>
+        <div style="color: white; font-size: 24px; font-weight: bold; margin-bottom: 10px;">R100</div>
+        <p style="color: #ccc; font-size: 13px; margin: 0; line-height: 1.4;">Basic wash + deep vacuum, dashboard wipe-down, and window clean.</p>
     </div>
 
-    <div class="pricing-card" onclick="selectCars('polish')">
-        <h3>Plus Body Polish</h3>
-        <div class="price">R200</div>
-        <p class="desc">Plus interior + hand wax, buffing, and long-lasting paint protection.</p>
+    <!-- Card 3 -->
+    <div onclick="showSection('book'); selectCars('polish');" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; width: 220px; cursor: pointer; text-align: left; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+        <h3 style="color: #00d2ff; margin: 0 0 10px 0; font-size: 18px;">Plus Body Polish</h3>
+        <div style="color: white; font-size: 24px; font-weight: bold; margin-bottom: 10px;">R200</div>
+        <p style="color: #ccc; font-size: 13px; margin: 0; line-height: 1.4;">Plus interior + hand wax, buffing, and long-lasting paint protection.</p>
     </div>
 </div>
       
@@ -281,29 +284,29 @@
         </div>
 
         <!-- Cars & package -->
-        <div class="card">
-          <div class="card-title"><i class="ti ti-car" aria-hidden="true"></i> Number of Cars &amp; Package</div>
-          <label class="section-label">How many cars?</label>
-          <div class="car-selector" role="group" aria-label="Number of cars">
-            <button class="car-btn selected" onclick="selectCars(1,'R100')" aria-pressed="true">
-              1 Car<br><small>R100</small>
-            </button>
-            <button class="car-btn" onclick="selectCars(2,'R180')" aria-pressed="false">
-              2 Cars<br><small>R180</small>
-            </button>
-            <button class="car-btn" onclick="selectCars(3,'R250')" aria-pressed="false">
-              3 Cars<br><small>R250</small>
-            </button>
-          </div>
-          <label class="section-label" style="margin-top:18px">Or choose a monthly package</label>
-          <div class="pkg-grid">
-            <button class="pkg-btn" id="pkg-monthly" onclick="selectPkg('Monthly (4 washes)','R350')" aria-pressed="false">
-              Monthly Package
-              <span class="pkg-price">R350</span>
-              <small>4 washes</small>
-            </button>
-          </div>
-        </div>
+       <!-- NEW SERVICE SELECTION -->
+<div class="card">
+    <div class="card-title"><i class="ti ti-car" aria-hidden="true"></i> Select Your Service</div>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+        
+        <button type="button" class="car-btn selected" onclick="selectCars('basic')" style="text-align: left; padding: 15px; border: 2px solid #1a73e8; border-radius: 8px; background: #f0f7ff; cursor: pointer; transition: 0.2s;">
+            <strong>Basic Wash - R80</strong><br>
+            <span style="font-size: 13px; color: #666;">Exterior hand wash, dry, and tire shine.</span>
+        </button>
+
+        <button type="button" class="car-btn" onclick="selectCars('interior')" style="text-align: left; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s;">
+            <strong>Plus Interior - R100</strong><br>
+            <span style="font-size: 13px; color: #666;">Basic wash + deep vacuum, dashboard wipe-down, and window clean.</span>
+        </button>
+
+        <button type="button" class="car-btn" onclick="selectCars('polish')" style="text-align: left; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s;">
+            <strong>Plus Body Polish - R200</strong><br>
+            <span style="font-size: 13px; color: #666;">Plus interior + hand wax, buffing, and long-lasting paint protection.</span>
+        </button>
+
+    </div>
+</div>
 
         <!-- Payment -->
         <div class="card">
