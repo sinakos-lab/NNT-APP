@@ -52,34 +52,31 @@
         </button>
       </div>
 
+<!-- PUBLIC UPDATES BANNER -->
+<div id="public-updates-container" style="display: none; background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin: 20px auto; max-width: 800px; text-align: center; border: 1px solid #ffeeba;">
+    <strong>📢 Important Update:</strong> <span id="latest-update-text"></span>
+</div>
+
       <!-- Pricing -->
-      <div class="price-grid" role="list" aria-label="Pricing options">
-        <div class="price-card" role="listitem">
-          <div class="price-icon"><i class="ti ti-car" aria-hidden="true"></i></div>
-          <div class="price-label">Single car</div>
-          <div class="price-amount">R100</div>
-          <div class="price-desc">Standard wash for any vehicle</div>
-        </div>
-        <div class="price-card" role="listitem">
-          <div class="price-icon"><i class="ti ti-car-crash" aria-hidden="true"></i></div>
-          <div class="price-label">2 Cars</div>
-          <div class="price-amount">R180</div>
-          <div class="price-desc">Save R20 on two vehicles</div>
-        </div>
-        <div class="price-card" role="listitem">
-          <div class="price-icon"><i class="ti ti-bus" aria-hidden="true"></i></div>
-          <div class="price-label">3 Cars</div>
-          <div class="price-amount">R250</div>
-          <div class="price-desc">Best value for three cars</div>
-        </div>
-        <div class="price-card featured" role="listitem">
-          <div class="badge">Best Value</div>
-          <div class="price-icon"><i class="ti ti-repeat" aria-hidden="true"></i></div>
-          <div class="price-label">Monthly Package</div>
-          <div class="price-amount">R350</div>
-          <div class="price-desc">4 washes per month – save R50</div>
-        </div>
-      </div>
+      <div class="pricing-grid">
+    <div class="pricing-card" onclick="selectCars('basic')">
+        <h3>Basic Wash</h3>
+        <div class="price">R80</div>
+        <p class="desc">Exterior hand wash, dry, and tire shine.</p>
+    </div>
+
+    <div class="pricing-card" onclick="selectCars('interior')">
+        <h3>Plus Interior</h3>
+        <div class="price">R100</div>
+        <p class="desc">Basic wash + deep vacuum, dashboard wipe-down, and window clean.</p>
+    </div>
+
+    <div class="pricing-card" onclick="selectCars('polish')">
+        <h3>Plus Body Polish</h3>
+        <div class="price">R200</div>
+        <p class="desc">Plus interior + hand wax, buffing, and long-lasting paint protection.</p>
+    </div>
+</div>
       
 <!-- ===== CUSTOMER REVIEWS CAROUSEL ===== -->
 <section class="reviews-section" id="reviewsSection">
@@ -413,6 +410,12 @@
           </div>
         </div>
       </div>
+
+<div class="admin-update-box" style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+    <h3>Post a New Update</h3>
+    <textarea id="new-update-text" rows="2" placeholder="Type your update here..." style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
+    <button onclick="postUpdate()" class="btn-primary">Publish Update</button>
+</div>
 
     </section>
 

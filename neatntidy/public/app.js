@@ -17,11 +17,10 @@ const CONFIG = {
   SERVICE_AREA:    'Stellenbosch and surrounding areas',
   CURRENCY:        'R',
 
-  PRICING: {
-    car1:    { label: '1 Car Wash',          price: 100 },
-    car2:    { label: '2 Cars Wash',         price: 180 },
-    car3:    { label: '3 Cars Wash',         price: 250 },
-    monthly: { label: 'Monthly (4 washes)',  price: 350 },
+   PRICING: {
+    basic:   { label: 'Basic Wash',       price: 80,  desc: 'Exterior hand wash, dry, and tire shine.' },
+    interior:{ label: 'Plus Interior',    price: 100, desc: 'Basic wash + deep vacuum, dashboard wipe-down, and window clean.' },
+    polish:  { label: 'Plus Body Polish', price: 200, desc: 'Plus interior + hand wax, buffing, and long-lasting paint protection.' },
   },
 
   TIME_SLOTS: [
@@ -116,19 +115,12 @@ function showSection(id) {
 }
 
 /* ── Service selection ─────────────────────────────────── */
-function selectCars(n) {
-  const key = 'car' + n;
-  state.selectedService = key;
+function selectCars(serviceKey) {
+  state.selectedService = serviceKey;
 
-  // Clear monthly pkg selection
-  $('pkg-monthly').classList.remove('selected');
-  $('pkg-monthly').setAttribute('aria-pressed', 'false');
-
-  // Update car buttons
-  document.querySelectorAll('.car-btn').forEach((btn, i) => {
-    const selected = i + 1 === n;
-    btn.classList.toggle('selected', selected);
-    btn.setAttribute('aria-pressed', String(selected));
+  // Update active styling on cards
+  document.querySelectorAll('.pricing-card').forEach(card => {
+    card.classList.toggle('selected', card.getAttribute('onclick').includes(serviceKey));
   });
 
   updateSummary();
@@ -904,3 +896,49 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 });
+
+// ===== ADMIN UPDATES SYSTEM =====
+
+async function loadUpdates() {
+    try {
+        const response = await fetch('/api/updates');
+        const updates = await response.json();
+        
+        if (updates && updates.length > 0) {
+            const latest = updates[0]; // Get the most recent one
+            document.getElementById('latest-update-text').textContent = latest.content;
+            document.getElementById('public-updates-container').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error loading updates:', error);
+    }
+}
+
+async function postUpdate() {
+    const content = document.getElementById('new-update-text').value;
+    if (!content) return alert('Please type an update first.');
+
+    // The password is required by the backend
+    const password = prompt('Enter admin password to publish:');
+    
+    try {
+        const response = await fetch('/api/updates', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password, content })
+        });
+        
+        if (response.ok) {
+            alert('Update published successfully!');
+            document.getElementById('new-update-text').value = '';
+            loadUpdates(); // Refresh the banner
+        } else {
+            alert('Incorrect password or server error.');
+        }
+    } catch (error) {
+        console.error('Error posting update:', error);
+    }
+}
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', loadUpdates);
